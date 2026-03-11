@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iEL · Erasmus+ Score Leaderboard</title>
+<title>Erasmus+ Score Leaderboard</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #09090b; color: #fafafa; min-height: 100vh; padding-bottom: 80px; }
 
 .header { background: linear-gradient(155deg, #18181b, #1a0a2e); padding: 28px 20px 22px; border-bottom: 1px solid #27272a; }
-.header-inner { max-width: 860px; margin: 0 auto; }
-.header-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #8b5cf6; font-weight: 700; margin-bottom: 4px; }
-.header h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+.header-inner { max-width: 940px; margin: 0 auto; }
+.eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #8b5cf6; font-weight: 700; margin-bottom: 4px; }
+h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
 .header-sub { font-size: 12px; color: #52525b; margin-bottom: 16px; }
 .stats { display: flex; gap: 10px; flex-wrap: wrap; }
 .stat { border-radius: 10px; padding: 8px 16px; text-align: center; }
@@ -19,62 +19,76 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .stat .lbl { font-size: 9px; color: #71717a; letter-spacing: .5px; text-transform: uppercase; margin-top: 2px; }
 .stat-purple { background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.3); }
 .stat-purple .val { color: #a78bfa; }
-.stat-green { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25); }
-.stat-green .val { color: #4ade80; }
+.stat-green  { background: rgba(34,197,94,.1);   border: 1px solid rgba(34,197,94,.25); }
+.stat-green .val  { color: #4ade80; }
 
-.content { max-width: 860px; margin: 0 auto; padding: 20px 20px 0; }
+.content { max-width: 940px; margin: 0 auto; padding: 20px 20px 0; }
 
-.toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; justify-content: space-between; }
-.toolbar-left { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.filter-btn { background: #18181b; border: 1px solid #27272a; color: #a1a1aa; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; }
-.filter-btn:hover { border-color: #52525b; }
-.filter-btn.active { background: #27272a; border-color: #52525b; color: #fafafa; }
-.add-btn { background: #7c3aed; border: none; color: #fff; border-radius: 8px; padding: 6px 16px; font-size: 12px; font-weight: 600; cursor: pointer; }
-.add-btn:hover { background: #6d28d9; }
-.edit-toggle { background: transparent; border: 1px solid #27272a; color: #71717a; border-radius: 8px; padding: 6px 14px; font-size: 12px; cursor: pointer; }
-.edit-toggle.on { border-color: #f59e0b; color: #f59e0b; background: rgba(245,158,11,.08); }
+/* LOADING / ERROR */
+.state-msg { text-align: center; padding: 60px 20px; color: #52525b; font-size: 14px; }
+.spinner { width: 28px; height: 28px; border: 3px solid #27272a; border-top-color: #7c3aed; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-box { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.2); border-radius: 10px; padding: 16px 18px; color: #f87171; font-size: 13px; line-height: 1.7; text-align: left; max-width: 560px; margin: 0 auto; }
+.error-box code { font-family: monospace; background: #1f1f23; padding: 1px 5px; border-radius: 4px; font-size: 11px; }
 
+/* TOOLBAR */
+.toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; justify-content: space-between; }
+.toolbar-left { display: flex; gap: 6px; flex-wrap: wrap; }
+.fbtn { background: #18181b; border: 1px solid #27272a; color: #a1a1aa; border-radius: 8px; padding: 6px 13px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; }
+.fbtn:hover { border-color: #52525b; color: #fafafa; }
+.fbtn.on { background: #27272a; border-color: #52525b; color: #fafafa; }
+.refresh-btn { background: transparent; border: 1px solid #27272a; color: #71717a; border-radius: 8px; padding: 6px 13px; font-size: 12px; cursor: pointer; transition: all .15s; }
+.refresh-btn:hover { border-color: #52525b; color: #a1a1aa; }
+.last-updated { font-size: 11px; color: #3f3f46; }
+
+/* LEGEND */
 .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; color: #52525b; margin-bottom: 12px; align-items: center; }
 .legend-item { display: flex; align-items: center; gap: 4px; }
-.ldot { width: 7px; height: 7px; border-radius: 50%; }
+.ldot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
+/* TABLE */
 .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #27272a; }
 table { width: 100%; border-collapse: collapse; }
 thead th { background: #111113; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #52525b; font-weight: 600; padding: 10px 14px; text-align: left; border-bottom: 1px solid #27272a; white-space: nowrap; }
-tbody tr { border-bottom: 1px solid #1f1f23; }
+tbody tr { border-bottom: 1px solid #1f1f23; transition: background .1s; }
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: #111116; }
 tbody td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
 
-.role-coord { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.3); color: #a78bfa; border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
-.role-partner { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.25); color: #fbbf24; border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
+/* ORG BADGE */
+.org-iel { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(99,102,241,.18); border: 1px solid rgba(99,102,241,.35); color: #a5b4fc; border-radius: 6px; padding: 2px 8px; letter-spacing: .5px; }
+.org-csf { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(20,184,166,.15); border: 1px solid rgba(20,184,166,.3); color: #5eead4; border-radius: 6px; padding: 2px 8px; letter-spacing: .5px; }
 
+/* ROLE BADGE */
+.role-coord   { display: inline-block; font-size: 10px; font-weight: 600; background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.3); color: #a78bfa; border-radius: 6px; padding: 2px 8px; white-space: nowrap; margin-top: 4px; }
+.role-partner { display: inline-block; font-size: 10px; font-weight: 600; background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.25); color: #fbbf24; border-radius: 6px; padding: 2px 8px; white-space: nowrap; margin-top: 4px; }
+
+/* SCORE */
 .score-cell { display: flex; align-items: center; gap: 8px; }
 .score-num { font-family: monospace; font-size: 14px; font-weight: 700; min-width: 26px; }
-.score-bar { flex: 1; height: 4px; background: #27272a; border-radius: 2px; overflow: hidden; min-width: 36px; }
+.score-bar { flex: 1; height: 4px; background: #27272a; border-radius: 2px; overflow: hidden; min-width: 40px; }
 .score-bar-fill { height: 100%; border-radius: 2px; }
-.score-dash { font-family: monospace; font-size: 13px; color: #3f3f46; }
-.score-edit { font-family: monospace; font-size: 13px; background: #1f1f28; border: 1px solid #7c3aed; color: #a78bfa; border-radius: 5px; width: 52px; padding: 3px 6px; text-align: center; outline: none; }
+.score-dash { font-family: monospace; font-size: 14px; color: #3f3f46; }
 
-.proj-title { font-weight: 600; font-size: 13px; }
+/* PROJECT */
+.proj-title { font-weight: 600; font-size: 13px; line-height: 1.3; }
 .proj-nr { font-family: monospace; font-size: 9px; color: #3f3f46; margin-top: 3px; }
 .type-badge { font-family: monospace; font-size: 11px; color: #71717a; background: #1f1f23; border-radius: 5px; padding: 2px 7px; display: inline-block; }
 
+/* STATUS */
 .status { font-size: 10px; font-weight: 600; border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
-.s-approved { background: rgba(34,197,94,.12); color: #4ade80; border: 1px solid rgba(34,197,94,.25); }
+.s-approved { background: rgba(34,197,94,.12);  color: #4ade80; border: 1px solid rgba(34,197,94,.25); }
 .s-running  { background: rgba(96,165,250,.12); color: #60a5fa; border: 1px solid rgba(96,165,250,.25); }
 .s-rejected { background: rgba(248,113,113,.1); color: #f87171; border: 1px solid rgba(248,113,113,.2); }
 .s-reserve  { background: rgba(245,158,11,.1);  color: #fbbf24; border: 1px solid rgba(245,158,11,.2); }
 
-.btn-edit-row   { background: transparent; border: 1px solid #27272a; color: #52525b; border-radius: 5px; padding: 3px 7px; font-size: 11px; cursor: pointer; margin-right: 2px; }
-.btn-edit-row:hover { border-color: #7c3aed; color: #a78bfa; }
-.btn-del-row    { background: transparent; border: 1px solid transparent; color: #3f3f46; border-radius: 5px; padding: 3px 6px; font-size: 11px; cursor: pointer; }
-.btn-del-row:hover { border-color: #7f1d1d; color: #f87171; }
+.notes-text { font-size: 10px; color: #52525b; font-style: italic; max-width: 160px; line-height: 1.4; }
 
+/* PIPELINE */
 .pipeline-section { margin-top: 32px; }
 .pip-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; user-select: none; }
 .pip-head h2 { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #52525b; }
-.pip-toggle-lbl { font-size: 11px; color: #3f3f46; }
+.pip-lbl { font-size: 11px; color: #3f3f46; }
 .pip-notice { background: rgba(245,158,11,.07); border: 1px solid rgba(245,158,11,.15); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; font-size: 12px; color: #d97706; line-height: 1.6; }
 .pip-card { background: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 9px 13px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .pip-flag { font-size: 16px; }
@@ -85,23 +99,6 @@ tbody td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
 .pip-id { font-family: monospace; font-size: 9px; color: #3f3f46; margin-bottom: 2px; }
 .pip-badge { font-size: 10px; background: rgba(245,158,11,.12); color: #fbbf24; border-radius: 6px; padding: 2px 7px; font-weight: 500; }
 
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 100; align-items: center; justify-content: center; }
-.modal-overlay.open { display: flex; }
-.modal { background: #18181b; border: 1px solid #27272a; border-radius: 14px; padding: 24px; width: 100%; max-width: 480px; margin: 20px; }
-.modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 18px; }
-.fg { margin-bottom: 13px; }
-.fg label { display: block; font-size: 10px; color: #71717a; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
-.fg input, .fg select { width: 100%; background: #111113; border: 1px solid #27272a; color: #fafafa; border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none; font-family: inherit; }
-.fg input:focus, .fg select:focus { border-color: #7c3aed; }
-.fg select option { background: #18181b; }
-.frow { display: flex; gap: 12px; }
-.frow .fg { flex: 1; }
-.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
-.btn-cancel { background: transparent; border: 1px solid #27272a; color: #71717a; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
-.btn-cancel:hover { border-color: #52525b; }
-.btn-save { background: #7c3aed; border: none; color: #fff; border-radius: 8px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
-.btn-save:hover { background: #6d28d9; }
-
 .hidden { display: none !important; }
 </style>
 </head>
@@ -109,9 +106,9 @@ tbody td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
 
 <div class="header">
   <div class="header-inner">
-    <div class="header-eyebrow">Innovation Education Lab · Erasmus+</div>
+    <div class="eyebrow">iEL · CSF · Erasmus+</div>
     <h1>Score Leaderboard</h1>
-    <p class="header-sub">Fiecare proiect apare o singură dată — scorul de selecție și scorul de raport final, alăturat.</p>
+    <p class="header-sub">Date live din Google Sheets · apasă Refresh pentru a vedea ultimele modificări</p>
     <div class="stats">
       <div class="stat stat-purple"><div class="val" id="stat-sel">—</div><div class="lbl">Best Selecție</div></div>
       <div class="stat stat-green"><div class="val" id="stat-rep">—</div><div class="lbl">Best Raport Final</div></div>
@@ -120,141 +117,157 @@ tbody td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
 </div>
 
 <div class="content">
-  <div class="toolbar">
-    <div class="toolbar-left">
-      <button class="filter-btn active" onclick="setFilter('all')">Toate proiectele</button>
-      <button class="filter-btn" onclick="setFilter('coord')">🇷🇴 Coordonator</button>
-      <button class="filter-btn" onclick="setFilter('partner')">🌍 Partener</button>
-      <button class="edit-toggle" id="edit-toggle" onclick="toggleEditMode()">✏️ Editează</button>
-    </div>
-    <button class="add-btn" onclick="openModal()">+ Adaugă proiect</button>
+
+  <div id="loading-state" class="state-msg">
+    <div class="spinner"></div>
+    Se încarcă datele din Google Sheets...
   </div>
 
-  <div class="legend">
-    <span style="color:#52525b;font-weight:600;">Scor:</span>
-    <span class="legend-item"><span class="ldot" style="background:#4ade80"></span>75+ excelent</span>
-    <span class="legend-item"><span class="ldot" style="background:#60a5fa"></span>65–74 bun</span>
-    <span class="legend-item"><span class="ldot" style="background:#fbbf24"></span>55–64 mediu</span>
-    <span class="legend-item"><span class="ldot" style="background:#f87171"></span>sub 55 slab</span>
-    <span style="color:#3f3f46;margin-left:4px">· <span style="font-family:monospace">—</span> = scor necunoscut încă</span>
+  <div id="error-state" class="state-msg hidden">
+    <div class="error-box" id="error-msg"></div>
   </div>
 
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Rol iEL</th>
-          <th>Proiect</th>
-          <th>Tip · An</th>
-          <th>Scor Selecție</th>
-          <th>Scor Raport Final</th>
-          <th>Status</th>
-          <th class="edit-col hidden">Acțiuni</th>
-        </tr>
-      </thead>
-      <tbody id="table-body"></tbody>
-    </table>
-  </div>
-
-  <div class="pipeline-section">
-    <div class="pip-head" onclick="togglePipeline()">
-      <h2>🌍 Aplicații Partener în așteptare</h2>
-      <span class="pip-toggle-lbl" id="pip-lbl">▼ arată (11)</span>
-    </div>
-    <div id="pip-content" class="hidden">
-      <div class="pip-notice">
-        Aceste proiecte sunt depuse, dar nu au primit încă niciun scor. iEL este <b>partener</b> — coordonatorul este o altă organizație, iar evaluarea va fi făcută de agenția națională din țara coordonatorului.
+  <div id="main-content" class="hidden">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button class="fbtn on" onclick="setFilter('all')">Toate</button>
+        <button class="fbtn"    onclick="setFilter('iEL')">iEL</button>
+        <button class="fbtn"    onclick="setFilter('CSF')">CSF</button>
+        <button class="fbtn"    onclick="setFilter('coord')">🇷🇴 Coordonator</button>
+        <button class="fbtn"    onclick="setFilter('partner')">🌍 Partener</button>
       </div>
-      <div id="pip-list"></div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <h3 id="modal-title">Adaugă proiect nou</h3>
-    <div class="fg"><label>Titlu proiect</label><input type="text" id="f-title" placeholder="ex. CRAFTWISE"></div>
-    <div class="frow">
-      <div class="fg"><label>Tip (KA…)</label><input type="text" id="f-type" placeholder="ex. KA220-YOU"></div>
-      <div class="fg"><label>An</label><input type="number" id="f-year" placeholder="2025" min="2014" max="2035"></div>
-    </div>
-    <div class="fg"><label>Număr proiect</label><input type="text" id="f-nr" placeholder="ex. 2025-1-RO01-KA220-YOU-000351677"></div>
-    <div class="frow">
-      <div class="fg"><label>Rol iEL</label>
-        <select id="f-role">
-          <option value="coord">🇷🇴 Coordonator</option>
-          <option value="partner">🌍 Partener</option>
-        </select>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="last-updated" id="last-updated"></span>
+        <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
       </div>
-      <div class="fg"><label>Țară coordonator</label><input type="text" id="f-country" placeholder="Romania"></div>
     </div>
-    <div class="frow">
-      <div class="fg"><label>Scor Selecție</label><input type="number" id="f-sel" placeholder="— lasă gol" min="0" max="100"></div>
-      <div class="fg"><label>Scor Raport Final</label><input type="number" id="f-rep" placeholder="— lasă gol" min="0" max="100"></div>
+
+    <div class="legend">
+      <span style="color:#52525b;font-weight:600">Scor:</span>
+      <span class="legend-item"><span class="ldot" style="background:#4ade80"></span>75+ excelent</span>
+      <span class="legend-item"><span class="ldot" style="background:#60a5fa"></span>65–74 bun</span>
+      <span class="legend-item"><span class="ldot" style="background:#fbbf24"></span>55–64 mediu</span>
+      <span class="legend-item"><span class="ldot" style="background:#f87171"></span>sub 55 slab</span>
+      <span style="color:#3f3f46">· <span style="font-family:monospace">—</span> = necunoscut încă</span>
+      <span style="margin-left:8px;color:#52525b">
+        Org: <span class="org-iel" style="margin:0 3px">iEL</span>
+             <span class="org-csf" style="margin:0 3px">CSF</span>
+      </span>
     </div>
-    <div class="fg"><label>Status</label>
-      <select id="f-status">
-        <option value="approved">✅ Aprobat / Finalizat</option>
-        <option value="running">🔵 În desfășurare</option>
-        <option value="rejected">❌ Respins</option>
-        <option value="reserve">⚠️ Listă rezervă</option>
-      </select>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Org · Rol</th>
+            <th>Proiect</th>
+            <th>Tip · An</th>
+            <th>Acreditare</th>
+            <th>Scor Selecție</th>
+            <th>Scor Raport Final</th>
+            <th>Status</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
     </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Anulează</button>
-      <button class="btn-save" onclick="saveProject()">Salvează</button>
+
+    <div class="pipeline-section">
+      <div class="pip-head" onclick="togglePipeline()">
+        <h2>🌍 Aplicații Partener în așteptare</h2>
+        <span class="pip-lbl" id="pip-lbl">▼ arată (11)</span>
+      </div>
+      <div id="pip-content" class="hidden">
+        <div class="pip-notice">
+          Aceste proiecte sunt depuse dar nu au primit niciun scor încă. Suntem <b>parteneri</b> — coordonatorul este din altă țară, care va face evaluarea.
+        </div>
+        <div id="pip-list"></div>
+      </div>
     </div>
   </div>
+
 </div>
 
 <script>
-let projects = [
-  {id:1,  role:"coord",   country:"Romania", title:"CRAFTWISE",                               type:"KA220-YOU", year:2025, nr:"2025-1-RO01-KA220-YOU-000351677",  sel:75,   rep:null, status:"running"},
-  {id:2,  role:"coord",   country:"Romania", title:"Social Innovation — Design to Enterprise", type:"KA210",     year:2022, nr:"2022-1-RO01-KA210-YOU-000082491",  sel:70,   rep:68,   status:"approved"},
-  {id:3,  role:"coord",   country:"Romania", title:"E-Mployed",                               type:"KA220-YOU", year:2021, nr:"2021-1-RO01-KA220-YOU-000028913",  sel:68,   rep:61,   status:"approved"},
-  {id:4,  role:"coord",   country:"Romania", title:"KA153-YOU Runda 3",                       type:"KA153",     year:2025, nr:"2025-3-RO01-KA153-YOU-000368791",  sel:68,   rep:null, status:"rejected"},
-  {id:5,  role:"coord",   country:"Romania", title:"KA153-YOU Runda 1",                       type:"KA153",     year:2025, nr:"2025-1-RO01-KA153-YOU-000302112",  sel:66,   rep:null, status:"rejected"},
-  {id:6,  role:"coord",   country:"Romania", title:"THRIVE",                                  type:"KA220-YOU", year:2024, nr:"2024-2-RO01-KA220-YOU-000278979",  sel:65,   rep:null, status:"rejected"},
-  {id:7,  role:"coord",   country:"Romania", title:"fYOUture GrowTH Brasov",                  type:"KA154",     year:2023, nr:"2023-1-RO01-KA154-YOU-000145283",  sel:64,   rep:50,   status:"approved"},
-  {id:8,  role:"coord",   country:"Romania", title:"E-mployed 2.0",                           type:"KA220-YOU", year:2023, nr:"2023-2-RO01-KA220-YOU-000175356",  sel:62,   rep:null, status:"rejected"},
-  {id:9,  role:"coord",   country:"Romania", title:"KA220-ADU",                               type:"KA220-ADU", year:2025, nr:"2025-1-RO01-KA220-ADU-000351837",  sel:59,   rep:null, status:"rejected"},
-  {id:10, role:"coord",   country:"Romania", title:"KOBUDO în leadership",                    type:"KA153",     year:2021, nr:"2021-2-RO01-KA153-YOU-000039522",  sel:null, rep:78,   status:"approved"},
-  {id:11, role:"coord",   country:"Romania", title:"E(ART)H",                                 type:"KA152",     year:2022, nr:"2022-3-RO01-KA152-YOU-000096636",  sel:null, rep:75,   status:"approved"},
-  {id:12, role:"coord",   country:"Romania", title:"Viitorul TU",                             type:"KA152",     year:2022, nr:"2022-3-RO01-KA152-YOU-000098060",  sel:null, rep:74,   status:"approved"},
-  {id:13, role:"coord",   country:"Romania", title:"PRO(fessional) Youth in Work",            type:"KA152",     year:2022, nr:"2022-1-RO01-KA152-YOU-000061813",  sel:null, rep:69,   status:"approved"},
-  {id:14, role:"coord",   country:"Romania", title:"Embrace e-motions in Motion",             type:"KA153",     year:2023, nr:"2023-3-RO01-KA153-YOU-000175821",  sel:null, rep:68,   status:"approved"},
-  {id:15, role:"coord",   country:"Romania", title:"Social Innovation — D2E (rezervă)",       type:"KA210",     year:2021, nr:"2021-2-RO01-KA210-YOU-000049295",  sel:68,   rep:null, status:"reserve"},
-];
+// ─────────────────────────────────────────────────────────────────
+// 👇 PASTE YOUR APPS SCRIPT WEB APP URL HERE
+// ─────────────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = "APPS_SCRIPT_URL";
+// ─────────────────────────────────────────────────────────────────
 
 const pipeline = [
-  {id:"KA152-YOU-C65A55AC", org:"Fundacja Nomadom",          flag:"🇵🇱", country:"Polonia",      date:"Feb 2026"},
-  {id:"KA152-YOU-0559EB11", org:"ARCAS Puglia",              flag:"🇮🇹", country:"Italia",       date:"Feb 2026"},
-  {id:"KA152-YOU-DB5C964E", org:"Det Nødvendige Seminarium", flag:"🇩🇰", country:"Danemarca",    date:"Feb 2026"},
-  {id:"KA152-YOU-D69A6F53", org:"Synchro",                   flag:"🇧🇪", country:"Belgia",       date:"Feb 2026"},
-  {id:"KA152-YOU-B31987F5", org:"Synchro",                   flag:"🇧🇪", country:"Belgia",       date:"Sep 2025"},
-  {id:"KA152-YOU-CE940347", org:"Det Nødvendige Seminarium", flag:"🇩🇰", country:"Danemarca",    date:"Feb 2025"},
-  {id:"KA152-YOU-2E625959", org:"Voy'Agir",                  flag:"🇫🇷", country:"Franța",       date:"Feb 2025"},
-  {id:"KA152-YOU-71C13965", org:"Association FR",            flag:"🇫🇷", country:"Franța",       date:"Feb 2025"},
-  {id:"KA220-HED-F277C886", org:"Technical University",      flag:"🌍",  country:"Internațional",date:"Mar 2026"},
-  {id:"KA220-YOU-C7847C2C", org:"OFENSIVA TINERILOR",        flag:"🇷🇴", country:"Romania",      date:"Mar 2026"},
-  {id:"KA220-YOU-247C6238", org:"DARE TO DEVELOPE ACADEMY",  flag:"🌍",  country:"Internațional",date:"Mar 2026"},
+  {id:"KA152-YOU-C65A55AC", org:"Fundacja Nomadom",          flag:"🇵🇱", country:"Polonia",       date:"Feb 2026"},
+  {id:"KA152-YOU-0559EB11", org:"ARCAS Puglia",              flag:"🇮🇹", country:"Italia",        date:"Feb 2026"},
+  {id:"KA152-YOU-DB5C964E", org:"Det Nødvendige Seminarium", flag:"🇩🇰", country:"Danemarca",     date:"Feb 2026"},
+  {id:"KA152-YOU-D69A6F53", org:"Synchro",                   flag:"🇧🇪", country:"Belgia",        date:"Feb 2026"},
+  {id:"KA152-YOU-B31987F5", org:"Synchro",                   flag:"🇧🇪", country:"Belgia",        date:"Sep 2025"},
+  {id:"KA152-YOU-CE940347", org:"Det Nødvendige Seminarium", flag:"🇩🇰", country:"Danemarca",     date:"Feb 2025"},
+  {id:"KA152-YOU-2E625959", org:"Voy'Agir",                  flag:"🇫🇷", country:"Franța",        date:"Feb 2025"},
+  {id:"KA152-YOU-71C13965", org:"Association FR",            flag:"🇫🇷", country:"Franța",        date:"Feb 2025"},
+  {id:"KA220-HED-F277C886", org:"Technical University",      flag:"🌍",  country:"Internațional", date:"Mar 2026"},
+  {id:"KA220-YOU-C7847C2C", org:"OFENSIVA TINERILOR",        flag:"🇷🇴", country:"Romania",       date:"Mar 2026"},
+  {id:"KA220-YOU-247C6238", org:"DARE TO DEVELOPE ACADEMY",  flag:"🌍",  country:"Internațional", date:"Mar 2026"},
 ];
 
+let allProjects = [];
 let currentFilter = 'all';
-let editMode = false;
-let editingId = null;
-let nextId = 100;
 
+// ── LOAD ──────────────────────────────────────────────────────────
+async function loadData() {
+  document.getElementById('loading-state').classList.remove('hidden');
+  document.getElementById('error-state').classList.add('hidden');
+  document.getElementById('main-content').classList.add('hidden');
+
+  if (APPS_SCRIPT_URL === "APPS_SCRIPT_URL") {
+    showError(
+      `<strong>URL-ul nu este configurat.</strong><br><br>
+      Deschide fișierul HTML și înlocuiește <code>APPS_SCRIPT_URL</code> cu URL-ul primit după Deploy în Apps Script.<br><br>
+      Urmează instrucțiunile din fișierul <code>Code.gs</code>.`
+    );
+    return;
+  }
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} — ${resp.statusText}`);
+    const json = await resp.json();
+    if (json.error) throw new Error(json.error);
+
+    allProjects = (json.projects || []).map(p => ({
+      ...p,
+      accreditation_nr: p.accreditation_nr || ''
+    }));
+    document.getElementById('loading-state').classList.add('hidden');
+    document.getElementById('main-content').classList.remove('hidden');
+    document.getElementById('last-updated').textContent = `Actualizat: ${new Date().toLocaleTimeString('ro-RO')}`;
+    render();
+    renderPipeline();
+  } catch (e) {
+    showError(
+      `<strong>Nu s-au putut încărca datele.</strong><br>
+      Eroare: ${e.message}<br><br>
+      Verifică:<br>
+      • URL-ul din HTML este cel copiat după Deploy<br>
+      • La deploy ai setat "Who has access" → <strong>Anyone</strong><br>
+      • Dacă ai modificat scriptul, fă un <strong>New deployment</strong> (nu Update)`
+    );
+  }
+}
+
+function showError(html) {
+  document.getElementById('loading-state').classList.add('hidden');
+  document.getElementById('error-state').classList.remove('hidden');
+  document.getElementById('error-msg').innerHTML = html;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────
 function scoreColor(s) {
   return s >= 75 ? "#4ade80" : s >= 65 ? "#60a5fa" : s >= 55 ? "#fbbf24" : "#f87171";
 }
 
-function scoreCell(s, field, id) {
-  if (editMode) {
-    return `<input class="score-edit" type="number" min="0" max="100" value="${s !== null ? s : ''}" placeholder="—" onchange="updateScore(${id},'${field}',this.value)">`;
-  }
-  if (s === null) return `<span class="score-dash">—</span>`;
+function scoreCell(s) {
+  if (s === null || s === undefined) return `<span class="score-dash">—</span>`;
   const c = scoreColor(s);
   return `<div class="score-cell">
     <span class="score-num" style="color:${c}">${s}</span>
@@ -263,34 +276,54 @@ function scoreCell(s, field, id) {
 }
 
 function statusBadge(st) {
-  const m = {approved:['s-approved','✅ Finalizat'], running:['s-running','🔵 În desfășurare'], rejected:['s-rejected','❌ Respins'], reserve:['s-reserve','⚠️ Rezervă']};
-  const [cls, lbl] = m[st] || ['s-rejected', st];
+  const m = {
+    approved: ['s-approved', '✅ Finalizat'],
+    running:  ['s-running',  '🔵 În desfășurare'],
+    rejected: ['s-rejected', '❌ Respins'],
+    reserve:  ['s-reserve',  '⚠️ Rezervă'],
+  };
+  const [cls, lbl] = m[st] || ['s-running', st];
   return `<span class="status ${cls}">${lbl}</span>`;
 }
 
+// ── RENDER ────────────────────────────────────────────────────────
 function render() {
-  const filtered = currentFilter === 'all' ? projects : projects.filter(p => p.role === currentFilter);
-  const sorted = [...filtered].sort((a,b) => Math.max(b.sel||0, b.rep||0) - Math.max(a.sel||0, a.rep||0));
+  let filtered = allProjects;
+  if      (currentFilter === 'iEL')     filtered = allProjects.filter(p => p.org === 'iEL');
+  else if (currentFilter === 'CSF')     filtered = allProjects.filter(p => p.org === 'CSF');
+  else if (currentFilter === 'coord')   filtered = allProjects.filter(p => p.role === 'coord');
+  else if (currentFilter === 'partner') filtered = allProjects.filter(p => p.role === 'partner');
 
-  document.getElementById('table-body').innerHTML = sorted.map(p => `
-    <tr>
-      <td>${p.role === 'coord'
-        ? `<span class="role-coord">🇷🇴 Coord.</span>`
-        : `<span class="role-partner">🌍 Partener</span><div style="font-size:10px;color:#52525b;margin-top:3px">${p.country}</div>`}
-      </td>
-      <td><div class="proj-title">${p.title}</div><div class="proj-nr">${p.nr}</div></td>
-      <td><span class="type-badge">${p.type}</span><div style="font-size:10px;color:#52525b;margin-top:3px">${p.year}</div></td>
-      <td>${scoreCell(p.sel, 'sel', p.id)}</td>
-      <td>${scoreCell(p.rep, 'rep', p.id)}</td>
-      <td>${statusBadge(p.status)}</td>
-      <td class="edit-col ${editMode?'':'hidden'}" style="white-space:nowrap">
-        <button class="btn-edit-row" onclick="openModal(${p.id})">✏️</button>
-        <button class="btn-del-row" onclick="deleteProject(${p.id})">🗑</button>
-      </td>
-    </tr>`).join('');
+  const sorted = [...filtered].sort((a, b) =>
+    Math.max(b.sel ?? 0, b.rep ?? 0) - Math.max(a.sel ?? 0, a.rep ?? 0)
+  );
 
-  const allSel = projects.map(p=>p.sel).filter(s=>s!==null);
-  const allRep = projects.map(p=>p.rep).filter(s=>s!==null);
+  const orgBadge = org =>
+    org === 'CSF'
+      ? `<span class="org-csf">CSF</span>`
+      : `<span class="org-iel">iEL</span>`;
+
+  const roleBadge = (role, country) =>
+    role === 'partner'
+      ? `<span class="role-partner">🌍 Partener<br><span style="font-size:9px;opacity:.7">${country}</span></span>`
+      : `<span class="role-coord">🇷🇴 Coord.</span>`;
+
+  document.getElementById('table-body').innerHTML = sorted.length === 0
+    ? `<tr><td colspan="7" style="text-align:center;padding:40px;color:#52525b">Niciun proiect găsit.</td></tr>`
+    : sorted.map(p => `
+        <tr>
+          <td style="white-space:nowrap">${orgBadge(p.org)}<br>${roleBadge(p.role, p.country)}</td>
+          <td><div class="proj-title">${p.title}</div><div class="proj-nr">${p.nr}</div></td>
+          <td><span class="type-badge">${p.type}</span><div style="font-size:10px;color:#52525b;margin-top:3px">${p.year}</div></td>
+          <td><span style="font-family:monospace;font-size:9px;color:#52525b;line-height:1.5">${p.accreditation_nr || '<span style="color:#3f3f46">—</span>'}</span></td>
+          <td>${scoreCell(p.sel)}</td>
+          <td>${scoreCell(p.rep)}</td>
+          <td>${statusBadge(p.status)}</td>
+          <td><span class="notes-text">${p.notes}</span></td>
+        </tr>`).join('');
+
+  const allSel = allProjects.map(p => p.sel).filter(s => s !== null);
+  const allRep = allProjects.map(p => p.rep).filter(s => s !== null);
   document.getElementById('stat-sel').textContent = allSel.length ? Math.max(...allSel) : '—';
   document.getElementById('stat-rep').textContent = allRep.length ? Math.max(...allRep) : '—';
 }
@@ -299,103 +332,32 @@ function renderPipeline() {
   document.getElementById('pip-list').innerHTML = pipeline.map(x => `
     <div class="pip-card">
       <span class="pip-flag">${x.flag}</span>
-      <div class="pip-info"><div class="pip-name">${x.org}</div><div class="pip-sub">${x.country} · Depus ${x.date}</div></div>
-      <div class="pip-right"><div class="pip-id">${x.id}</div><span class="pip-badge">⏳ Așteptăm scor</span></div>
+      <div class="pip-info">
+        <div class="pip-name">${x.org}</div>
+        <div class="pip-sub">${x.country} · Depus ${x.date}</div>
+      </div>
+      <div class="pip-right">
+        <div class="pip-id">${x.id}</div>
+        <span class="pip-badge">⏳ Așteptăm scor</span>
+      </div>
     </div>`).join('');
 }
 
 function setFilter(f) {
   currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach((btn, i) => {
-    btn.classList.toggle('active', ['all','coord','partner'][i] === f);
+  document.querySelectorAll('.fbtn').forEach((btn, i) => {
+    btn.classList.toggle('on', ['all','iEL','CSF','coord','partner'][i] === f);
   });
-  render();
-}
-
-function toggleEditMode() {
-  editMode = !editMode;
-  const btn = document.getElementById('edit-toggle');
-  btn.classList.toggle('on', editMode);
-  btn.textContent = editMode ? '✅ Terminat' : '✏️ Editează';
-  render();
-}
-
-function updateScore(id, field, val) {
-  const p = projects.find(p => p.id === id);
-  if (p) p[field] = val === '' ? null : parseInt(val);
-  const allSel = projects.map(p=>p.sel).filter(s=>s!==null);
-  const allRep = projects.map(p=>p.rep).filter(s=>s!==null);
-  document.getElementById('stat-sel').textContent = allSel.length ? Math.max(...allSel) : '—';
-  document.getElementById('stat-rep').textContent = allRep.length ? Math.max(...allRep) : '—';
-}
-
-function deleteProject(id) {
-  if (!confirm('Ștergi acest proiect?')) return;
-  projects = projects.filter(p => p.id !== id);
   render();
 }
 
 function togglePipeline() {
   const c = document.getElementById('pip-content');
-  const hidden = c.classList.toggle('hidden');
-  document.getElementById('pip-lbl').textContent = hidden ? `▼ arată (${pipeline.length})` : '▲ ascunde';
+  const h = c.classList.toggle('hidden');
+  document.getElementById('pip-lbl').textContent = h ? `▼ arată (${pipeline.length})` : '▲ ascunde';
 }
 
-function openModal(id) {
-  editingId = id || null;
-  document.getElementById('modal-title').textContent = id ? 'Editează proiect' : 'Adaugă proiect nou';
-  if (id) {
-    const p = projects.find(p => p.id === id);
-    document.getElementById('f-title').value   = p.title;
-    document.getElementById('f-type').value    = p.type;
-    document.getElementById('f-year').value    = p.year;
-    document.getElementById('f-nr').value      = p.nr;
-    document.getElementById('f-role').value    = p.role;
-    document.getElementById('f-country').value = p.country || '';
-    document.getElementById('f-sel').value     = p.sel !== null ? p.sel : '';
-    document.getElementById('f-rep').value     = p.rep !== null ? p.rep : '';
-    document.getElementById('f-status').value  = p.status;
-  } else {
-    ['f-title','f-type','f-year','f-nr','f-country','f-sel','f-rep'].forEach(fid => document.getElementById(fid).value = '');
-    document.getElementById('f-role').value   = 'coord';
-    document.getElementById('f-status').value = 'running';
-  }
-  document.getElementById('modal').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  editingId = null;
-}
-
-function saveProject() {
-  const title = document.getElementById('f-title').value.trim();
-  if (!title) { alert('Titlul este obligatoriu.'); return; }
-  const data = {
-    role:    document.getElementById('f-role').value,
-    country: document.getElementById('f-country').value.trim() || 'Romania',
-    title,
-    type:    document.getElementById('f-type').value.trim(),
-    year:    parseInt(document.getElementById('f-year').value) || new Date().getFullYear(),
-    nr:      document.getElementById('f-nr').value.trim(),
-    sel:     document.getElementById('f-sel').value !== '' ? parseInt(document.getElementById('f-sel').value) : null,
-    rep:     document.getElementById('f-rep').value !== '' ? parseInt(document.getElementById('f-rep').value) : null,
-    status:  document.getElementById('f-status').value,
-  };
-  if (editingId) {
-    const idx = projects.findIndex(p => p.id === editingId);
-    projects[idx] = { ...projects[idx], ...data };
-  } else {
-    projects.push({ id: nextId++, ...data });
-  }
-  closeModal();
-  render();
-}
-
-document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
-
-render();
-renderPipeline();
+loadData();
 </script>
 </body>
 </html>
